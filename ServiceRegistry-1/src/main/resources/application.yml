@@ -1,0 +1,35 @@
+#some configurations are done here so that this server doesn't become the client itself i.e. doesn't connect/register with itself
+
+server:
+  port: 8094
+  
+eureka:
+  instance:
+    hostname: localhost
+    
+
+#eureka instance hostname is localhost
+#now we mention two important properties which will prevent in registering the server registry with itself
+
+#this service will not register as client for that we mention below
+  #client:
+   # register-with-eureka: false
+    
+    #it is not able to fetch registry while other microservices can fetch this registry
+    #fetch-registry: false
+
+ 
+
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  
+
+spring:
+  application:
+    name: eureka
+
+       
+  
+ #now we have to make other services as client and register here in service registry and can check all related information data  
+ 
