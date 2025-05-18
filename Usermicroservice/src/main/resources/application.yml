@@ -1,0 +1,92 @@
+#here details are maintioned in tree format i.e. we have to maintain indentation
+server:
+  port: 8095
+  
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/microservices
+    username: root
+    password: Sarvesh143
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+    
+#Hibernate properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    
+  application:
+    name: USER-SERVICE
+  
+    
+    
+    
+    #Eureka configuration
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8094/eureka/
+      
+      
+  #Resilience4j configuration(b/c it gives info about threshold limit, number of call fails, to open the circuit,open state 
+  # duration and many more)
+  
+  #Actuator configuration (enabling circuit breaker in health)
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        
+        #we want response in the endpoint
+  endpoint:
+    health:
+      show-details: always   
+        
+
+#Now Resilience4j configuration
+
+resilience4j:
+  circuitbreaker:
+    instances:
+    #instane name below is same as name of circuit breaker
+      ratingHotelBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+      #if failure rate is more than 50% circuit will change to open mode
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 6s
+        #after 6 second moved automatically to half state
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+        
+ #Retry module configuration(when we are using Retry we have to comment Circuit breaker part in the UserController)
+  retry:
+    instances:
+      ratingHotelServive:
+        max-attempts: 3
+        wait-duration: 2s     
+        
+#Rate limiter configuration(in order to use one we have to comment other as only one can work at a time)  
+  ratelimiter:
+    instances:
+      userRateLimiter:
+        limit-refresh-period: 4s
+        limit-for-period: 2
+        timeout-duration: 0s
+        
+      
+      
+    
