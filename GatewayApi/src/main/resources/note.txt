@@ -1,0 +1,40 @@
+Fault Tolerance :
+
+Fault :
+	When there is dependency b/w the services (i.e.) if one service depends on other service for it's data or working and 
+	suppose the other service is down then our complete Application will not run or we will get error or complete information will not
+	be available to the client.
+	
+	
+Fault tolerance ;
+	A way to handle the existing faults in the system it can be done with the help of the circuit breaker(.e. some libraries and
+	architecture is used to handle those faults)	
+	
+Circuit Breaker :
+	It works on state and it has basically three state 1)close 2)open 3)half-open
+	suppose if we define threshold for our service request(suppose 5) after 5 request service will become open and dependency
+	will fail, so we will not request for certain time defined/set by us and after that again try one-two request and if
+	we get success rate(6 response out of 10)/low failure then circuit will be closed again and works fine,
+	if success rate is low(2 response out of 10) then it will sent back to the open state again
+	
+	we have two ways to implement circuit breaker 1) hysterics 2)resilience4j (but we use only this one) 	
+	
+	
+	Retry module in Resilience4J -->
+	It is an important feature because, suppose some times service is UP but it's slow (we request 1st time due to some reason it
+	doesn't gives desired result/response, then we try again and that is where retry is used,(we can retry it number of times)
+	
+	
+	Rate Limiter -->
+	This functionality allows limiting access to some service
+	Rate limiter make services highly available by limiting the number of calls we could process in specific windows.
+	It is done for two reason 1) security 2) performance
+	
+Security with OKTA->
+		It is a third party service which provides all features of authentication and authorization	server
+		authentication-> it verify that you are the person, you say(validate)
+		authorization-> certain operation allowed to that authenticated user
+		OKTA will provide a token after authentication and authorization and with the help of this token we can perform further
+		operation
+		it provide OAUTH->Authorization and OPENID->Authentication
+	

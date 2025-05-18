@@ -1,0 +1,78 @@
+#API GATEWAY
+server:
+  port: 8096
+  
+spring:
+  application:
+    name: API-GATEWAY
+    
+  cloud:
+    gateway:
+      routes:
+      - id: USER-SERVICE
+        uri: lb://USER-SERVICE
+        predicates:
+        - Path=/users/**
+        
+ #for rating service 
+      - id: RATING-SERVICE
+        uri: lb://RATING-SERVICE
+        predicates:
+        - Path=/ratings/**
+        
+      - id: HOTEL-SERVICE
+        uri: lb://HOTEL-SERVICE
+        predicates:
+        - Path=/hotel/**,/staffs/**     
+
+
+#At place of uri instead of ip(url) we use load balance because we have register our services using there name and can access
+#them on basis of it's name'
+#pradicates used for matching anything based on HTTP Request(i.e. path from user service controller i.e. users from requeste
+#mapping followed by any other operation from controller)
+
+#  cloud:
+#    gateway:
+#      routes:
+#      - id: after_route
+#        uri: https://example.org
+#        predicates:
+#        - Cookie=mycookie,mycookievalue
+   
+    
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8094/eureka/  
+      
+#OKTA Configuration for API Gateway
+
+#issuer -> from OKTA developer account(security->API->default->issuer)
+#client id(from OKTA platform)-> Application->YourAppName(MyWebApp)->client id
+#client secret from same place
+#Scopes->what are the scopes/functions on which this API gateway works or define
+      
+okta:
+  oauth2:
+    issuer: https://dev-96364523.okta.com/oauth2/default
+    audience: api://default
+    client-id: 0oaaijbhtnAMWEPhS5d7
+    client-secret: ui6Q-gMBsfrAaQbvABAPmV6QVSWvYJG6buvmgmsJuC2MU4Xi3d3EDJGvDl4cX2IF
+    scopes:
+    - openid, profile, email, offline_access   
+    
+    #after OKTA configuration, we configure/make spring security in project in API Gateway(for that make
+    # config package and inside that a class Security)
+          
+    
+ #for load balancing we have to write it as 'lb' folowed by service name
+#By using the gateway api client can access any services at any time just by calling one url followed by the service
+
+ 
+# if we are building Config-server then there is no need to make gateway api (only one is needed), using config-server all 
+#configuration are available on it and other clients(User-Service,Rating-Service etc) can use this configuration from
+# config-server when they are needed
